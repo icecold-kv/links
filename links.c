@@ -6,13 +6,16 @@
 
 int links(char *arg) {
 	DIR *dir = opendir(arg);
+	if (dir == NULL)
+		return -1;
 	struct dirent *entry = readdir(dir);
 	char path[256];
 	struct stat buf;
 	while (entry != NULL) {
-		if (entry->d_name[0] != '.') {
+		if (strcmp(entry->d_name,".") != 0 && strcmp(entry->d_name,"..") != 0) {
 			strcpy(path, arg);
-			strcat(path, "/");
+			if (path[strlen(path)-1] != '/')
+				strcat(path, "/");
 			strcat(path, entry->d_name);
 			stat(path, &buf);
 			printf("%lu  %s\n", buf.st_nlink, path);
